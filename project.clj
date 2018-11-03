@@ -5,7 +5,7 @@
   :license {:name "MIT"
             :url  "https://opensource.org/licenses/MIT"}
   :plugins [[lein-ancient "0.6.15"]]
-  :dependencies []
+  :dependencies [[net.java.dev.jna/jna "5.0.0"]]
   :source-paths ["src/clj"]
   :java-source-paths ["src/java"]
   :resource-paths ["resources"]
