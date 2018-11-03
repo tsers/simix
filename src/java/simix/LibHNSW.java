@@ -3,9 +3,6 @@ package simix;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 
-import java.io.File;
-import java.io.IOException;
-
 public class LibHNSW {
 
   public static native Pointer hnsw_create_index(int spaceType, int dim, int maxElems, int M, int efConstruction, int random_seed);
@@ -26,19 +23,14 @@ public class LibHNSW {
     String osName = System.getProperty("os.name", "Unknown");
     switch (osName) {
       case "Mac OS X":
-        loadNativeLib("libhnsw_osx.dylib");
+        Native.register("libhnsw_osx.dylib");
+        break;
+      case "Linux":
+        Native.register("libhnsw_linux.so");
         break;
       default:
         throw new LinkageError("Non-supported OS: " + osName);
     }
   }
 
-  private static void loadNativeLib(String resourceName) {
-    try {
-      File lib = Native.extractFromResourcePath(resourceName);
-      Native.register(lib.getAbsolutePath());
-    } catch (IOException e) {
-      throw new LinkageError("Can't load native Faiss library " + resourceName, e);
-    }
-  }
 }
