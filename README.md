@@ -2,6 +2,9 @@
 
 Similarity index for Clojure, built on top of [hnsw](https://github.com/nmslib/hnsw).
 
+[![Build Status](https://img.shields.io/travis/tsers/simix/master.svg?style=flat-square)](https://travis-ci.org/tsers/simix)
+[![Clojars Project](https://img.shields.io/clojars/v/simix.svg?style=flat-square)](https://clojars.org/simix)
+
 ## Usage
 
 ### APIl
