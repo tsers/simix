@@ -10,5 +10,5 @@
   :java-source-paths ["src/java"]
   :resource-paths ["resources"]
   :profiles {:dev {:dependencies [[org.clojure/clojure "1.9.0"]]}}
-  :aliases {}
+  :aliases {"t" ["test"]}
   :release-tasks [["deploy"]])
