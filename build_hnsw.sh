@@ -7,7 +7,7 @@ if [ ! -d hnsw ]; then
   git clone https://github.com/nmslib/hnsw.git
 fi
 
-#cd hnsw && git fetch && git reset --hard $HNSW_VERSION && cd ..
+cd hnsw && git fetch && git reset --hard $HNSW_VERSION && cd ..
 
 mkdir -p resources
 
@@ -18,6 +18,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   CXX=g++-8
   CXX_FLAGS="$CXX_FLAGS -mmacosx-version-min=10.6"
   OUTPUT=libhnsw_osx.dylib
+else
+  OUTPUT=libhnsw_linux.so
 fi
 
 $CXX -I$(pwd)/hnsw/hnswlib $CXX_FLAGS -o resources/$OUTPUT libhnsw.cpp
