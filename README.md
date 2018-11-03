@@ -7,7 +7,7 @@ Similarity index for Clojure, built on top of [hnsw](https://github.com/nmslib/h
 
 ## Usage
 
-### APIl
+### API
 
 #### `(create space-type d max-items {:keys [M ef-construct seed] :as opts})`
 
