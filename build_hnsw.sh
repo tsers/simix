@@ -12,7 +12,7 @@ cd hnsw && git fetch && git reset --hard $HNSW_VERSION && cd ..
 mkdir -p resources
 
 CXX=g++
-CXX_FLAGS="-O3 -DNDEBUG -std=c++11 -fopenmp -fPIC -march=native -shared"
+CXX_FLAGS="-O3 -DNDEBUG -std=c++11 -fopenmp -fPIC -march=native -shared -static-libstdc++"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   CXX=g++-8
