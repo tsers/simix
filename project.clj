@@ -1,4 +1,4 @@
-(defproject simix "0.1.0"
+(defproject simix "0.2.0"
   :description "Similarity index for Clojure"
   :url "https://github.com/tsers/simix"
   :deploy-repositories [["releases" :clojars]]
