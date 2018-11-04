@@ -125,3 +125,8 @@
                 :cosine 2)
           ptr (LibHNSW/hnsw_load_index (.getAbsolutePath data) t dimension max)]
       (create-hnsw ptr dimension space-type max num-items))))
+
+(defn max-id-value []
+  (let [output (Memory. 100)]
+    (LibHNSW/hnsw_get_max_id_value output)
+    (max (BigInteger. (.getString output 0 "ASCII")) Long/MAX_VALUE)))

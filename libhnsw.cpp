@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <limits>
+#include <sstream>
 #include "hnswlib.h"
 
 struct Index {
@@ -22,6 +24,13 @@ static hnswlib::SpaceInterface<float>* _hnsw_create_space(int space_type, int di
 }
 
 extern "C" {
+
+int hnsw_get_max_id_value(char* output) {
+  std::stringstream buffer;
+  buffer << std::numeric_limits<std::size_t>::max();
+  strcpy(output, buffer.str().c_str());
+  return buffer.str().length();
+}
 
 Index* hnsw_create_index(int space_type, int dim, int max_elems, int M, int ef_construction, int random_seed) {
   auto space = _hnsw_create_space(space_type, dim);

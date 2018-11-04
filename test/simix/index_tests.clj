@@ -16,3 +16,6 @@
       (sim/save! idx f)))
   (let [idx (sim/load (io/file "target/smoke_idx") 200)]
     (is (= [3 2] (map :id (sim/q idx [0.8 0.3 0.6 0.4 0.1] 2))))))
+
+(deftest max-id-value-is-big-enough
+  (is (>= (sim/max-id-value) Long/MAX_VALUE)))

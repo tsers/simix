@@ -5,6 +5,8 @@ import com.sun.jna.Pointer;
 
 public class LibHNSW {
 
+  public static native int hnsw_get_max_id_value(Pointer output);
+
   public static native Pointer hnsw_create_index(int spaceType, int dim, int maxElems, int M, int efConstruction, int random_seed);
 
   public static native Pointer hnsw_load_index(String indexPath, int spaceType, int dim, int maxElems);
