@@ -3,17 +3,17 @@
 #include "hnswlib.h"
 
 struct Index {
-  size_t d;
+  int d;
   hnswlib::HierarchicalNSW<float> *hnsw;
   hnswlib::SpaceInterface<float> *space;
-  Index(size_t d, hnswlib::SpaceInterface<float>* s, hnswlib::HierarchicalNSW<float>* h) {
+  Index(int d, hnswlib::SpaceInterface<float>* s, hnswlib::HierarchicalNSW<float>* h) {
     this->d = d;
     this->space = s;
     this->hnsw = h;
   }
 };
 
-static hnswlib::SpaceInterface<float>* _hnsw_create_space(int space_type, size_t dim) {
+static hnswlib::SpaceInterface<float>* _hnsw_create_space(int space_type, int dim) {
   switch(space_type) {
     case 1: return new hnswlib::L2Space(dim);
     case 2: return new hnswlib::InnerProductSpace(dim);
@@ -23,7 +23,7 @@ static hnswlib::SpaceInterface<float>* _hnsw_create_space(int space_type, size_t
 
 extern "C" {
 
-Index* hnsw_create_index(int space_type, size_t dim, size_t max_elems, size_t M, size_t ef_construction, size_t random_seed) {
+Index* hnsw_create_index(int space_type, int dim, int max_elems, int M, int ef_construction, int random_seed) {
   auto space = _hnsw_create_space(space_type, dim);
   if (!space) {
     return nullptr;
@@ -32,7 +32,7 @@ Index* hnsw_create_index(int space_type, size_t dim, size_t max_elems, size_t M,
   return new Index(dim, space, hnsw);
 }
 
-Index*  hnsw_load_index(const char* index_path, int space_type, size_t dim, size_t max_elems) {
+Index*  hnsw_load_index(const char* index_path, int space_type, int dim, int max_elems) {
   auto space = _hnsw_create_space(space_type, dim);
   if (!space) {
     return nullptr;
@@ -51,26 +51,26 @@ void hnsw_release_index(Index* index) {
   delete index;
 }
 
-void hnsw_set_query_ef(Index* index, size_t ef) {
+void hnsw_set_query_ef(Index* index, int ef) {
   index->hnsw->ef_ = ef;
 }
 
-void hnsw_add_item(Index* index, int id, float* data) {
-  index->hnsw->addPoint((void *) data, id);
+void hnsw_add_item(Index* index, long id, float* data) {
+  index->hnsw->addPoint((void *) data, (size_t) id);
 }
 
-void hnsw_knn_query(Index* index, float* x, size_t k, float* distances, int* ids) {
+void hnsw_knn_query(Index* index, float* x, int k, float* distances, long* ids) {
   auto results = index->hnsw->searchKnn(x, k);
   size_t i = 0;
   while (!results.empty()) {
     const std::pair<float, size_t >& res = results.top();
     distances[i] = res.first;
-    ids[i] = (int) res.second;
+    ids[i] = (long) res.second;
     results.pop();
     ++i;
   }
   for (; i < k; i++) {
-    ids[i] = -1;
+    ids[i] = -1L;
   }
 }
 

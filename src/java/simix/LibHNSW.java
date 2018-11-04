@@ -15,7 +15,7 @@ public class LibHNSW {
 
   public static native void hnsw_set_query_ef(Pointer index, int ef);
 
-  public static native void hnsw_add_item(Pointer index, int id, Pointer data);
+  public static native void hnsw_add_item(Pointer index, long id, Pointer data);
 
   public static native void hnsw_knn_query(Pointer index, Pointer x, int k, Pointer distances, Pointer ids);
 

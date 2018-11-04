@@ -18,8 +18,8 @@
 (defn- c-floats [x]
   (c-arr 4 (float-array x)))
 
-(defn- c-ints [x]
-  (c-arr 4 (int-array x)))
+(defn- c-longs [x]
+  (c-arr 8 (long-array x)))
 
 (defn- mem->floats [m]
   (let [arr (float-array (/ (.size m) 4))]
@@ -27,8 +27,8 @@
     (seq arr)))
 
 
-(defn- mem->ints [m]
-  (let [arr (int-array (/ (.size m) 4))]
+(defn- mem->longs [m]
+  (let [arr (long-array (/ (.size m) 8))]
     (.read m 0 arr 0 (count arr))
     (seq arr)))
 
@@ -50,16 +50,16 @@
       (swap! counter #(if (> (inc %) max-items)
                         (throw (SimixException. (str "Max item count " max-items " exceeded") nil))
                         (inc %)))
-      (LibHNSW/hnsw_add_item ptr (int id) (c-floats val))))
+      (LibHNSW/hnsw_add_item ptr (long id) (c-floats val))))
   (q [_ x k]
     {:pre [(sequential? x)
            (= d (count x))
            (pos? k)]}
     (-use-hnsw [ptr wrapper]
       (let [dists (c-floats (map (constantly (float 0)) (range k)))
-            ids   (c-ints (map (constantly (int 0)) (range k)))]
+            ids   (c-longs (map (constantly (long 0)) (range k)))]
         (LibHNSW/hnsw_knn_query ptr (c-floats x) (int k) dists ids)
-        (->> (map vector (mem->ints ids) (mem->floats dists))
+        (->> (map vector (mem->longs ids) (mem->floats dists))
              (take-while (comp not neg? first))
              (reverse)
              (mapv (fn [[id d]] {:id (long id) :distance d}))))))
