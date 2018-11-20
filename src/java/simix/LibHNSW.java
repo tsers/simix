@@ -2,6 +2,13 @@ package simix;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.file.Files;
 
 public class LibHNSW {
 
@@ -25,13 +32,45 @@ public class LibHNSW {
     String osName = System.getProperty("os.name", "Unknown");
     switch (osName) {
       case "Mac OS X":
-        Native.register("libhnsw_osx.dylib");
+        loadLib("libhnsw_osx.dylib");
         break;
       case "Linux":
-        Native.register("libhnsw_linux.so");
+        loadLib("libhnsw_linux.so");
         break;
       default:
         throw new LinkageError("Non-supported OS: " + osName);
+    }
+  }
+
+  private static void loadLib(String resourceName) {
+    InputStream is = null;
+    try {
+      URL res = Thread.currentThread().getContextClassLoader().getResource(resourceName);
+      if (res == null) {
+        throw new IOException("Library file not found: " + resourceName);
+      }
+      if ("file".equals(res.getProtocol())) {
+        String filePath = res.getFile()
+                             .replace('/', File.separatorChar)
+                             .replace("+", URLEncoder.encode("+", "UTF-8"));
+        is = new FileInputStream(URLDecoder.decode(filePath, "UTF-8"));
+      } else {
+        is = res.openStream();
+      }
+      File tempFile = Files.createTempFile("libhnsw", "." + resourceName.split("\\.")[1]).toFile();
+      tempFile.deleteOnExit();
+      IOUtils.copy(is, new FileOutputStream(tempFile));
+      Native.register(tempFile.getAbsolutePath());
+    } catch (Exception e) {
+      throw new RuntimeException("Library loading failed", e);
+    } finally {
+      if (is != null) {
+        try {
+          is.close();
+        } catch (IOException e) {
+          // ignore
+        }
+      }
     }
   }
 
