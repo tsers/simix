@@ -43,9 +43,9 @@
   Index
   (dim [_] d)
   (add! [_ {:keys [id val]}]
-    {:pre [(sequential? val)
-           (= d (count val))
-           (pos? id)]}
+    (assert (sequential? val))
+    (assert (= d (count val)))
+    (assert (pos? id))
     (-use-hnsw [ptr wrapper]
       (swap! counter #(if (> (inc %) max-items)
                         (throw (SimixException. (str "Max item count " max-items " exceeded") nil))
@@ -64,10 +64,10 @@
              (reverse)
              (mapv (fn [[id d]] {:id (long id) :distance d}))))))
   (set-ef! [_ ef]
-    {:pre [(pos? ef)]}
+    (assert (pos? ef))
     (-use-hnsw [ptr wrapper] (LibHNSW/hnsw_set_query_ef ptr (int ef))))
   (save! [_ index-path]
-    {:pre [(instance? File index-path)]}
+    (assert (instance? File index-path))
     (-use-hnsw [ptr wrapper]
       (if (.exists index-path)
         (throw (SimixException. "Index directory already exists" nil)))
@@ -94,12 +94,12 @@
      :or   {M            32
             ef-construct 200
             seed         777}}]
-   {:pre [(pos? d)
-          (contains? #{:L2 :cosine} space-type)
-          (pos? max-items)
-          (pos? M)
-          (pos? ef-construct)
-          (pos? seed)]}
+   (assert (pos? d))
+   (assert (contains? #{:L2 :cosine} space-type))
+   (assert (pos? max-items))
+   (assert (pos? M))
+   (assert (pos? ef-construct))
+   (assert (pos? seed))
    (let [t   (case space-type
                :L2 1
                :cosine 2)
@@ -109,9 +109,9 @@
    (create space-type d max-items {})))
 
 (defn load [index-path max-items]
-  {:pre [(instance? File index-path)
-         (or (nil? max-items)
-             (pos? max-items))]}
+  (assert (instance? File index-path))
+  (assert (or (nil? max-items)
+              (pos? max-items)))
   (let [data (io/file index-path "data")
         meta (io/file index-path "meta.edn")]
     (if-not (and (.exists data) (.exists meta))
